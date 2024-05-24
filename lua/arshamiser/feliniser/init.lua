@@ -143,7 +143,7 @@ table.insert(components.active[1], {
 })
 
 table.insert(components.active[1], {
-  provider = "git_diff_changed",
+  provider = "  ",
   enabled = function()
     return require("feline.providers.git").git_info_exists()
   end,
