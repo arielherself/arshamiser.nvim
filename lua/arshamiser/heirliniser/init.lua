@@ -40,7 +40,7 @@ local vim_mode = { --{{{
         bold = true,
       }
     end,
-    provider = "  ",
+    provider = "  ",
   },
   {
     provider = function(self)
