@@ -153,7 +153,6 @@ table.insert(components.active[1], {
     fg = "git_change",
     bg = "statusline_bg",
   },
-  icon = "  "
 })
 
 table.insert(components.active[1], {

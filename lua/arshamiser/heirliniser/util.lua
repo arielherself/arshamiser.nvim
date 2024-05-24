@@ -109,7 +109,7 @@ M.separators = {--{{{
   right_rounded      = '',
   right_rounded_thin = '',
   circle             = '●',
-  github_icon        = " ﯙ ",
+  github_icon        = " ",
   folder_icon        = " ",
 }
 --}}}
