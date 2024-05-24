@@ -105,11 +105,11 @@ local git = { --{{{
       {
         git_count("added", "add", "  "),
         git_count("removed", "del", "  "),
-        git_count("changed", "change", " 柳"),
+        git_count("changed", "change", "  "),
       },
       {
         git_count("removed", "del", "  "),
-        git_count("changed", "change", " 柳"),
+        git_count("changed", "change", "  "),
       },
       {
         git_count("removed", "del", "  "),
