@@ -4,7 +4,7 @@ local M = {}
 -- properties from the highlight.
 -- Borrowed from the feline codebase.
 local function get_hl_properties(hlname) --{{{
-  local hl = vim.api.nvim_get_hl_by_name(hlname, true)
+  local hl = vim.api.nvim_get_hl(0, { name = hlname })
   local styles = {}
 
   for k, v in ipairs(hl) do
@@ -15,8 +15,8 @@ local function get_hl_properties(hlname) --{{{
 
   return {
     name = hlname,
-    fg = hl.foreground and string.format("#%06x", hl.foreground),
-    bg = hl.background and string.format("#%06x", hl.background),
+    fg = hl.fg and string.format("#%06x", hl.fg),
+    bg = hl.bg and string.format("#%06x", hl.bg),
     style = next(styles) and table.concat(styles, ",") or "NONE",
   }
 end --}}}
@@ -140,7 +140,7 @@ M.separators = {--{{{
   right_rounded      = '',
   right_rounded_thin = '',
   circle             = '●',
-  github_icon        = " ﯙ ",
+  github_icon        = "  ",
   folder_icon        = " ",
   database           = '  ',
 }
@@ -336,28 +336,49 @@ local lsp_config = { --{{{
   hints = "!",
   ok = "",
   spinner_frames = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
-  component_separator = "   ",
-  lsp_icon = " ",
+  component_separator = " ",
+  lsp_icon = "",
 }
 --}}}
 
 local lsp_names = { --{{{
-  ["null-ls"] = "Null",
-  ["diagnostics_on_open"] = "Diagnostics",
-  ["diagnostics_on_save"] = "Diagnostics",
-  bashls = "Bash",
-  clangd = "C++",
-  dockerls = "Docker",
-  gopls = "GoPLS",
-  golangci_lint_ls = "GolangCI",
-  html = "HTML",
-  jedi_language_server = "Python",
-  jsonls = "JSON",
-  sqls = "SQL",
-  sumneko_lua = "Lua",
-  tsserver = "TS",
-  vimls = "Vim",
-  yamlls = "YAML",
+  ["diagnostics_on_open"] = " Diagnostics",
+  ["diagnostics_on_save"] = " Diagnostics",
+  ["helm-ls"] = " Helm",
+  ["lua_ls"] = " LUA-LS",
+  ["null-ls"] = " NULL",
+  actionlint = " ActionLint",
+  autopep8 = " Autopep8",
+  bashls = " Bash",
+  bufls = " Buf",
+  cbfmt = " CBfmt",
+  clangd = " C++",
+  copilot = " Copilot",
+  delve = " Delve",
+  dockerls = " Docker",
+  fixjson = " FixJSON",
+  golangci_lint_ls = " GolangCI",
+  gopls = " GoPLS",
+  hadolint = " Hadolint",
+  html = " HTML",
+  impl = " Impl",
+  jedi_language_server = " Python",
+  jsonls = " JSON",
+  marksman = " Markdown",
+  prettier = " Prettier",
+  rust_analyzer = " Rust",
+  selene = " Selene",
+  shellcheck = " Shellcheck",
+  shellharden = " Shellharden",
+  shfmt = " Shfmt",
+  sqlls = " SQL",
+  sqls = " SQL",
+  stylua = " Stylua",
+  sumneko_lua = " Lua",
+  taplo = " Taplo",
+  tsserver = " TS",
+  vimls = " Vim",
+  yamlls = " YAML",
 }
 --}}}
 
@@ -511,6 +532,66 @@ end
 
 function M.visually_selected()
   return "𝒱 " .. selection_count()
+end
+
+function M.overseer()
+  local ok, overseer = pcall(require, "overseer")
+  if not ok then
+    return
+  end
+  local tasks = overseer.task_list
+  local STATUS = overseer.constants.STATUS
+  local symbols = {
+    ["FAILURE"] = "",
+    ["CANCELED"] = "",
+    ["SUCCESS"] = "",
+    ["RUNNING"] = "󰑮",
+  }
+  local tasks_by_status = overseer.util.tbl_group_by(tasks.list_tasks({ unique = true }), "status")
+
+  local all_symbols = {}
+  for _, status in ipairs(STATUS.values) do
+    local status_tasks = tasks_by_status[status]
+    if symbols[status] and status_tasks then
+      table.insert(all_symbols, symbols[status])
+    end
+  end
+  table.insert(all_symbols, " ")
+  return table.concat(all_symbols, " ")
+end
+
+function M.just_text(_, opts)
+  return opts.text
+end
+function M.file_size()
+  local suffix = { "b", "k", "M", "G", "T", "P", "E" }
+  local index = 1
+
+  local fsize = vim.fn.getfsize(vim.api.nvim_buf_get_name(0))
+
+  if fsize < 0 then
+    fsize = 0
+  end
+
+  while fsize > 1024 and index < 7 do
+    fsize = fsize / 1024
+    index = index + 1
+  end
+
+  return string.format(index == 1 and "%g%s " or "%.2f%s ", fsize, suffix[index])
+end
+
+function M.line_percentage()
+  local curr_line = vim.api.nvim_win_get_cursor(0)[1]
+  local lines = vim.api.nvim_buf_line_count(0)
+
+  if curr_line == 1 then
+    return "Top"
+  elseif curr_line == lines then
+    return "Bot"
+  else
+    return string.format("%2d%%%%", math.ceil(curr_line / lines * 99))
+  end
 end
 
 return M
