@@ -438,10 +438,12 @@ local internals = function(palette) -- Internals {{{
     Type = {
       -- int, long, char, etc.
       fg = palette.aqua,
+      italic = true,
     },
     Structure = {
       -- struct, union, enum, etc.
       fg = palette.aqua,
+      italic = true,
     },
     Struct = {
       link = "Structure",
@@ -489,6 +491,7 @@ local internals = function(palette) -- Internals {{{
     },
     Keyword = {
       fg = palette.pink,
+      bold = true,
     },
     PreProc = {
       -- generic Preprocessor
